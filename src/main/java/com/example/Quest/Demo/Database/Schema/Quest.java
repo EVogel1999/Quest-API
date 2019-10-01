@@ -1,8 +1,12 @@
 package com.example.Quest.Demo.Database.Schema;
 
+import org.bson.Document;
+import org.bson.types.ObjectId;
+
 import java.util.Date;
 
 public class Quest {
+    private ObjectId _id;
     private String _name;
     private String _description;
     private int _reward;
@@ -10,6 +14,7 @@ public class Quest {
     private Date _expires;
 
     public Quest() {
+        _id = null;
         _name = "";
         _description = "";
         _reward = -1;
@@ -17,7 +22,8 @@ public class Quest {
         _expires = null;
     }
 
-    public Quest(String _name, String _description, int _reward, boolean _completed, Date _expires) {
+    public Quest(String _id, String _name, String _description, int _reward, boolean _completed, Date _expires) {
+        this._id = new ObjectId(_id);
         this._name = _name;
         this._description = _description;
         this._reward = _reward;
@@ -25,43 +31,72 @@ public class Quest {
         this._expires = _expires;
     }
 
-    public String get_name() {
+    public ObjectId getId() {
+        return _id;
+    }
+
+    public void setId(String _id) {
+        this._id = new ObjectId(_id);
+    }
+
+    public String getName() {
         return _name;
     }
 
-    public void set_name(String _name) {
+    public void setName(String _name) {
         this._name = _name;
     }
 
-    public String get_description() {
+    public String getDescription() {
         return _description;
     }
 
-    public void set_description(String _description) {
+    public void setDescription(String _description) {
         this._description = _description;
     }
 
-    public int get_reward() {
+    public int getReward() {
         return _reward;
     }
 
-    public void set_reward(int _reward) {
+    public void setReward(int _reward) {
         this._reward = _reward;
     }
 
-    public boolean get_completed() {
+    public boolean getCompleted() {
         return _completed;
     }
 
-    public void set_completed(boolean _completed) {
+    public void setCompleted(boolean _completed) {
         this._completed = _completed;
     }
 
-    public Date get_expires() {
+    public Date getExpires() {
         return _expires;
     }
 
-    public void set_expires(Date _expires) {
+    public void setExpires(Date _expires) {
         this._expires = _expires;
+    }
+
+    public Document generateDocument() {
+        Document doc = new Document();
+        doc.append("_id", _id);
+        doc.append("name", _name);
+        doc.append("description", _description);
+        doc.append("reward", _reward);
+        doc.append("completed", _completed);
+        doc.append("expires", _expires);
+        return doc;
+    }
+
+    public static Quest parseDocument(Document doc) {
+        ObjectId id = doc.getObjectId("_id");
+        String name = doc.getString("name");
+        String description = doc.getString("description");
+        int reward = doc.getInteger("reward");
+        boolean completed = doc.getBoolean("completed");
+        Date expires = doc.getDate("expires");
+        return new Quest(id.toHexString(), name, description, reward, completed, expires);
     }
 }
