@@ -77,8 +77,10 @@ public class DatabaseAccess {
         return Hero.parseDocument(doc);
     }
 
-    public void createQuest(Quest quest) {
-        quests.insertOne(quest.generateDocument());
+    public Quest createQuest(Quest quest) {
+        Document doc = quest.generateDocument();
+        quests.insertOne(doc);
+        return Quest.parseDocument(doc);
     }
 
     public void updateHero(String id, Hero hero) throws Exception {
@@ -93,7 +95,7 @@ public class DatabaseAccess {
     public void updateQuest(String id, Quest quest) throws Exception{
         if (id.equals(quest.getId())) {
             Bson filter = new Document("_id", new ObjectId(id));
-            quests.updateOne(filter, quest.generateDocument());
+            quests.updateOne(filter, new Document("$set", quest.generateDocument()));
         } else {
             throw new Exception("Ids of query and quest to update do not match");
         }

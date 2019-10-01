@@ -83,9 +83,9 @@ public class Quest {
         Document doc = new Document();
 
         if (_id == null) {
-            doc.append("_id", new ObjectId(_id));
-        } else {
             doc.append("_id", new ObjectId());
+        } else {
+            doc.append("_id", new ObjectId(_id));
         }
 
         doc.append("name", _name);
