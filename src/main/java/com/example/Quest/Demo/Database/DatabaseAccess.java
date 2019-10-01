@@ -7,6 +7,7 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -20,7 +21,8 @@ public class DatabaseAccess {
     private static MongoCollection quests;
 
     static {
-        MongoClientURI uri = new MongoClientURI(System.getenv("MONGODB_CONNECTION"));
+        Dotenv dotenv = Dotenv.load();
+        MongoClientURI uri = new MongoClientURI(dotenv.get("MONGODB_CONNECTION"));
         MongoClient client = new MongoClient(uri);
         database = client.getDatabase("test");
         heroes = database.getCollection("heroes");
@@ -57,41 +59,53 @@ public class DatabaseAccess {
         return quests;
     }
 
-    public Hero getHero(ObjectId id) {
-        Bson filter = new Document("_id", id);
-        return (Hero) heroes.find(filter).first();
+    public Hero getHero(String id) {
+        Bson filter = new Document("_id", new ObjectId(id));
+        Document doc = (Document) heroes.find(filter).first();
+        return Hero.parseDocument(doc);
     }
 
-    public Quest getQuest(ObjectId id) {
-        Bson filter = new Document("_id", id);
-        return (Quest) quests.find(filter).first();
+    public Quest getQuest(String id) {
+        Bson filter = new Document("_id", new ObjectId(id));
+        Document doc = (Document) quests.find(filter).first();
+        return Quest.parseDocument(doc);
     }
 
-    public void createHero(Hero hero) {
-        heroes.insertOne(hero.generateDocument());
+    public Hero createHero(Hero hero) {
+        Document doc = hero.generateDocument();
+        heroes.insertOne(doc);
+        return Hero.parseDocument(doc);
     }
 
     public void createQuest(Quest quest) {
         quests.insertOne(quest.generateDocument());
     }
 
-    public void updateHero(Hero hero) {
-        Bson filter = new Document("_id", hero.getId());
-        heroes.updateOne(filter, hero.generateDocument());
+    public void updateHero(String id, Hero hero) throws Exception {
+        if (id.equals(hero.getId())) {
+            Bson filter = new Document("_id", new ObjectId(id));
+            heroes.updateOne(filter, new Document("$set", hero.generateDocument()));
+        } else {
+            throw new Exception("Ids of query and hero to update do not match");
+        }
     }
 
-    public void updateQuest(Quest quest) {
-        Bson filter = new Document("_id", quest.getId());
-        quests.updateOne(filter, quest.generateDocument());
+    public void updateQuest(String id, Quest quest) throws Exception{
+        if (id.equals(quest.getId())) {
+            Bson filter = new Document("_id", new ObjectId(id));
+            quests.updateOne(filter, quest.generateDocument());
+        } else {
+            throw new Exception("Ids of query and quest to update do not match");
+        }
     }
 
-    public void deleteHero(ObjectId id) {
-        Bson filter = new Document("_id", id);
+    public void deleteHero(String id) {
+        Bson filter = new Document("_id", new ObjectId(id));
         heroes.deleteOne(filter);
     }
 
-    public void deleteQuest(ObjectId id) {
-        Bson filter = new Document("_id", id);
+    public void deleteQuest(String id) {
+        Bson filter = new Document("_id", new ObjectId(id));
         quests.deleteOne(filter);
     }
 }

@@ -4,7 +4,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 
 public class Hero {
-    private ObjectId _id;
+    private String _id;
     private String _name;
     private String _type;
     private int _level;
@@ -17,18 +17,18 @@ public class Hero {
     }
 
     public Hero(String _id, String _name, String _class, int _level) {
-        this._id = new ObjectId(_id);
+        this._id = _id;
         this._name = _name;
         this._type = _class;
         this._level = _level;
     }
 
-    public ObjectId getId() {
+    public String getId() {
         return _id;
     }
 
     public void setId(String _id) {
-        this._id = new ObjectId(_id);
+        this._id = _id;
     }
 
     public String getName() {
@@ -57,7 +57,13 @@ public class Hero {
 
     public Document generateDocument() {
         Document doc = new Document();
-        doc.append("_id", _id);
+
+        if (_id == null) {
+            doc.append("_id", new ObjectId());
+        } else {
+            doc.append("_id", new ObjectId(_id));
+        }
+
         doc.append("name", _name);
         doc.append("class", _type);
         doc.append("level", _level);

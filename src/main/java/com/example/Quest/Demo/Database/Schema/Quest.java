@@ -6,7 +6,7 @@ import org.bson.types.ObjectId;
 import java.util.Date;
 
 public class Quest {
-    private ObjectId _id;
+    private String _id;
     private String _name;
     private String _description;
     private int _reward;
@@ -23,7 +23,7 @@ public class Quest {
     }
 
     public Quest(String _id, String _name, String _description, int _reward, boolean _completed, Date _expires) {
-        this._id = new ObjectId(_id);
+        this._id = _id;
         this._name = _name;
         this._description = _description;
         this._reward = _reward;
@@ -31,12 +31,12 @@ public class Quest {
         this._expires = _expires;
     }
 
-    public ObjectId getId() {
+    public String getId() {
         return _id;
     }
 
     public void setId(String _id) {
-        this._id = new ObjectId(_id);
+        this._id = _id;
     }
 
     public String getName() {
@@ -81,7 +81,13 @@ public class Quest {
 
     public Document generateDocument() {
         Document doc = new Document();
-        doc.append("_id", _id);
+
+        if (_id == null) {
+            doc.append("_id", new ObjectId(_id));
+        } else {
+            doc.append("_id", new ObjectId());
+        }
+
         doc.append("name", _name);
         doc.append("description", _description);
         doc.append("reward", _reward);
