@@ -79,6 +79,10 @@ public class Quest {
         this._expires = _expires;
     }
 
+    /**
+     * Generates a Document of the Quest to easily save into the database
+     * @return Document of the Quest
+     */
     public Document generateDocument() {
         Document doc = new Document();
 
@@ -96,6 +100,11 @@ public class Quest {
         return doc;
     }
 
+    /**
+     * Parses a Document retrieved from the database
+     * @param doc the Document to parse
+     * @return a Quest given the parsed Document
+     */
     public static Quest parseDocument(Document doc) {
         ObjectId id = doc.getObjectId("_id");
         String name = doc.getString("name");

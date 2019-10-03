@@ -55,6 +55,10 @@ public class Hero {
         this._level = _level;
     }
 
+    /**
+     * Generates a Document of the Hero to easily save into the database
+     * @return Document of the Hero
+     */
     public Document generateDocument() {
         Document doc = new Document();
 
@@ -70,6 +74,11 @@ public class Hero {
         return doc;
     }
 
+    /**
+     * Parses a Document retrieved from the database
+     * @param doc the Document to parse
+     * @return a Hero given the parsed Document
+     */
     public static Hero parseDocument(Document doc) {
         ObjectId id = doc.getObjectId("_id");
         String _name = doc.getString("name");
